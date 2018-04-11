@@ -1,0 +1,30 @@
+{
+  "name": "fastgoo/async-http-client",
+  "type": "library",
+  "description": "基于swoole扩展的HTTP异步请求扩展包，需要依赖swoole扩展",
+  "keywords": [
+    "swoole",
+    "async",
+    "http"
+  ],
+  "homepage": "https://phalcon.fastgoo.net",
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "Mr.Zhou",
+      "email": "773729704@qq.com",
+      "homepage": "https://github.com/fastgoo"
+    }
+  ],
+  "require": {
+    "php": ">=7.0"
+  },
+  "require-dev": {
+    "eaglewu/swoole-ide-helper": "dev-master"
+  },
+  "autoload": {
+    "psr-4": {
+      "AsyncClient\\": "src/"
+    }
+  }
+}
