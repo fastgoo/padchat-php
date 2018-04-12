@@ -10,7 +10,7 @@
 
 ---
 
-:zap: **[推荐--nodejs版本](https://alibaba.github.io/ice/#/block)：** padchat团队提供的nodesdk,本项目是参照该项目开发
+:zap: **[推荐--nodejs版本](https://github.com/binsee/padchat-sdk)：** padchat团队提供的nodesdk,本项目是参照该项目开发
 
 :dart: **[Swoole](https://www.swoole.com/)：** 版本需要为1.9+，主要使用其定时器、异步websocket客户端、多进程管理等
 
