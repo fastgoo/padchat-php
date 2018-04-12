@@ -18,10 +18,10 @@ class Logger
 
     public function __construct($pid = 0)
     {
-        $this->request = new MonoLogger("");
+        $this->request = new MonoLogger("pid-$pid");
         $this->request->pushHandler(new StreamHandler("runtime/log/request-pid-$pid.log", MonoLogger::DEBUG));
 
-        $this->response = new MonoLogger("");
+        $this->response = new MonoLogger("pid-$pid");
         $this->response->pushHandler(new StreamHandler("runtime/log/response-pid-$pid.log", MonoLogger::DEBUG));
     }
 

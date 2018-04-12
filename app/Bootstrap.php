@@ -43,15 +43,15 @@ class Bootstrap
                 return new WebSocket($config->server->host, $config->server->port);
             });
             /** 注册api接口类 */
-            PadchatDi::getDefault()->set('api', function () use ($pid) {
+            PadchatDi::getDefault()->set('api', function () {
                 return new Api();
             });
             /** 注册websocket数据回调类 */
-            PadchatDi::getDefault()->set('callback', function () use ($pid) {
+            PadchatDi::getDefault()->set('callback', function () {
                 return new Callback();
             });
             /** 注入消息处理类 */
-            PadchatDi::getDefault()->set('receive', function () use ($pid) {
+            PadchatDi::getDefault()->set('receive', function () {
                 return new Receive();
             });
             /** 注入日志类 */
@@ -73,8 +73,11 @@ class Bootstrap
                 PadchatDi::getDefault()->get('callback')->handle();
             });
             /** 设置连接回调 */
-            PadchatDi::getDefault()->get('websocket')->onConnect(function () {
+            PadchatDi::getDefault()->get('websocket')->onConnect(function () use($pid) {
                 PadchatDi::getDefault()->get('api')->send('init');
+                if($pid){
+                    echo "启动padchat-php服务成功，pid: $pid";
+                }
             });
             /** 连接服务 */
             PadchatDi::getDefault()->get('websocket')->connect();
@@ -101,9 +104,10 @@ class Bootstrap
                     //$work->exit();
                 });
                 $process->setProcessName('padchat-php-index-' . $i);
-                $pid[] = $process->run();
+                $process->setDaemon(true);
+                $pid[] = $pida = $process->run();
+                sleep(1);
             }
-
         }
         return $pid;
     }

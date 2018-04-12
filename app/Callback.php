@@ -23,8 +23,6 @@ class Callback
 
     public function handle()
     {
-        PadchatDi::getDefault()->get('log')->responseDebug(PadchatDi::getDefault()->get('receive')->getParams());
-
         //初始化设备
         if (PadchatDi::getDefault()->get('receive')->isInit()) {
             PadchatDi::getDefault()->get('log')->responseDebug("微信客户端实例化成功：");
@@ -54,7 +52,9 @@ class Callback
         }
         //消息事件回调
         if ($ret = PadchatDi::getDefault()->get('receive')->isMessageCallback()) {
+            $this->message($ret);
             if (PadchatDi::getDefault()->get('receive')->isAtMe()) {
+                PadchatDi::getDefault()->get('api')->sendMsg($ret->from_user, "收到@消息");
                 PadchatDi::getDefault()->get('log')->responseDebug("有人@我 ");
             }
             PadchatDi::getDefault()->get('log')->responseDebug("收到消息通知 " . json_encode($ret, JSON_UNESCAPED_UNICODE));

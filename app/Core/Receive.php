@@ -141,7 +141,6 @@ class Receive
     {
         if (!empty($this->param->data->list[0]->msg_source)) {
             $sourceRet = json_decode(json_encode(simplexml_load_string($this->param->data->list[0]->msg_source)));
-            var_dump($sourceRet->atuserlist,strpos($sourceRet->atuserlist,TaskIoc::getDefault()->get('wxid')));
             if (!empty($sourceRet->atuserlist) && strpos($sourceRet->atuserlist,TaskIoc::getDefault()->get('wxid')) !== false) {
                 return true;
             }
@@ -153,9 +152,6 @@ class Receive
     {
         if (empty($this->param->data->list[0]->sub_type)) {
             return '';
-        }
-        switch ($this->param->data->list[0]->sub_type) {
-
         }
     }
 }

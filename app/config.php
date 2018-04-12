@@ -8,7 +8,7 @@
 return [
     'debug' => [
         /** 请求记录debug */
-        'request' => true,
+        'request' => false,
         /** 响应数据记录debug */
         'response' => true,
         /** 在命令终端输出debug */
@@ -16,9 +16,9 @@ return [
     ],
     'process' => [
         /** 启用多进程开启多个服务 */
-        'status' => false,
+        'status' => true,
         /** 最多同时启动的服务数量 */
-        'count' => 10
+        'count' => 2
     ],
     'server' => [
         'host' => '118.89.159.190',
