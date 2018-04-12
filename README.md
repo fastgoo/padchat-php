@@ -25,11 +25,35 @@
 - `composer install` 安装依赖包
 - `php run.php` 开始服务
 
+## 项目说明
+在启动项目之前需要先配置配置文件，配置后才方可启动
 
-## 社区
+```
+'debug' => [
+        /** 请求记录debug */
+        'request' => false,
+        /** 响应数据记录debug */
+        'response' => true,
+        /** 在命令终端输出debug */
+        'cmd' => true,
+    ],
+    'process' => [
+        /** 启用多进程开启多个服务 */
+        'status' => false,
+        /** 最多同时启动的服务数量 */
+        'count' => 2
+    ],
+    'server' => [
+        'host' => '127.0.0.1',//server.exe所在的ip
+        'port' => 7777, //端口
+    ],
+```
+如需在生产环境运行，请关闭日志打印，以及终端输出。同时向保证进程稳定运行请使用进程守护工具守护进程，保证进程的正常运行。
 
-扫码进入飞冰钉钉群（加入钉钉群即可实时交流、反馈）
 
-* 飞冰 ❶ (已满）
-* 飞冰 ❷ 
-<img alt="Join the chat at dingtalk" src="https://gw.alicdn.com/tfs/TB1iVfbe1SSBuNjy0FlXXbBpVXa-640-880.jpg" width="200">
+## 简介
+- QQ：773729704 记得备注github
+- 微信：huoniaojugege 记得备注github
+
+
+
