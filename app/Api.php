@@ -20,7 +20,14 @@ class Api
         TaskIoc::getDefault()->set('lat-cmd-id', $cmdId);
         $data = ['type' => 'user', 'cmd' => $cmd, 'cmdId' => $cmdId, 'data' => $data];
         $ret = json_encode($data, JSON_UNESCAPED_UNICODE);
-        PadchatDi::getDefault()->get('log')->requestDebug($ret);
+        $config = PadchatDi::getDefault()->get('config');
+        if ($config->debug->cmd) {
+            echo "\n请求：$ret";
+        }
+        if ($config->debug->request) {
+            PadchatDi::getDefault()->get('log')->requestDebug($ret);
+        }
+
         PadchatDi::getDefault()->get('websocket')->send($ret);
     }
 

@@ -2,6 +2,8 @@
 .idea/
 .DS_Store
 vendor/
+runtime/log/*.log
+runtime/qrcode/*.png
 composer.lock
 
 
