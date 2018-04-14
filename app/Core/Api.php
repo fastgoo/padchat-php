@@ -6,10 +6,9 @@
  * Time: 下午4:41
  */
 
-namespace Padchat;
+namespace Padchat\Core;
 
 use Padchat\Core\Ioc as PadchatDi;
-use Padchat\Core\TaskIoc;
 
 class Api
 {

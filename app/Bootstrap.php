@@ -8,6 +8,8 @@
 
 namespace Padchat;
 
+use Padchat\Core\Api;
+use Padchat\Core\Client;
 use Padchat\Core\Ioc as PadchatDi;
 use AsyncClient\WebSocket;
 use Padchat\Core\Logger;
@@ -18,6 +20,7 @@ class Bootstrap
 {
     private $callFunc;
     private $config;
+    private $redis;
 
     public function __construct()
     {
@@ -33,6 +36,7 @@ class Bootstrap
     {
 
         $this->callFunc = function (int $pid = 0) {
+
             /** 注册配置信息 */
             PadchatDi::getDefault()->set('config', function () {
                 return json_decode(json_encode($this->config));
@@ -41,6 +45,16 @@ class Bootstrap
             PadchatDi::getDefault()->set('websocket', function () {
                 $config = PadchatDi::getDefault()->get('config');
                 return new WebSocket($config->server->host, $config->server->port);
+            });
+            /** redis注册 */
+            PadchatDi::getDefault()->set('redis', function () {
+                if($this->config)
+                return false;
+                $config = $this->config['redis'];
+                $redis = new \Redis();
+                $redis->pconnect($config['host'], $config['port']);
+                $redis->auth($config['auth']);
+                return $redis;
             });
             /** 注册api接口类 */
             PadchatDi::getDefault()->set('api', function () {
@@ -53,6 +67,10 @@ class Bootstrap
             /** 注入消息处理类 */
             PadchatDi::getDefault()->set('receive', function () {
                 return new Receive();
+            });
+            /** 注入消息处理类 */
+            PadchatDi::getDefault()->set('client', function () {
+                return new Client();
             });
             /** 注入日志类 */
             PadchatDi::getDefault()->set('log', function () use ($pid) {
@@ -73,10 +91,10 @@ class Bootstrap
                 PadchatDi::getDefault()->get('callback')->handle();
             });
             /** 设置连接回调 */
-            PadchatDi::getDefault()->get('websocket')->onConnect(function () use($pid) {
+            PadchatDi::getDefault()->get('websocket')->onConnect(function () use ($pid) {
                 PadchatDi::getDefault()->get('api')->send('init');
-                if($pid){
-                    echo "启动padchat-php服务成功，pid: $pid";
+                if ($pid) {
+                    echo "\n启动padchat-php服务成功，pid: $pid";
                 }
             });
             /** 连接服务 */

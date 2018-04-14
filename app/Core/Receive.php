@@ -141,7 +141,7 @@ class Receive
     {
         if (!empty($this->param->data->list[0]->msg_source)) {
             $sourceRet = json_decode(json_encode(simplexml_load_string($this->param->data->list[0]->msg_source)));
-            if (!empty($sourceRet->atuserlist) && strpos($sourceRet->atuserlist,TaskIoc::getDefault()->get('wxid')) !== false) {
+            if (!empty($sourceRet->atuserlist) && strpos($sourceRet->atuserlist, TaskIoc::getDefault()->get('wxid')) !== false) {
                 return true;
             }
         }
@@ -153,5 +153,55 @@ class Receive
         if (empty($this->param->data->list[0]->sub_type)) {
             return '';
         }
+    }
+
+    /**
+     * 获取好友申请的参数
+     * @param $params
+     * @return array
+     */
+    public function getFriendRequestParams($params): array
+    {
+        $data = json_decode(json_encode(simplexml_load_string($params->content)), true);
+        if (empty($data['@attributes'])) {
+            return [];
+        }
+        return $data['@attributes'];
+    }
+
+    /**
+     * 获取已登录的用户的wxId
+     * @return mixed|object
+     */
+    public function getWxId()
+    {
+        return TaskIoc::getDefault()->get('wxid');
+    }
+
+    /**
+     * 获取消息数据，优化处理
+     * @param $params
+     * @return array
+     */
+    public function getMessageParams($params): array
+    {
+        $data = (array)$params;
+        /** 判断消息是群消息还是好友消息 */
+        if (strpos($data['from_user'], '@chatroom') !== false) {
+            list($send_wxid) = explode(':', $data['content']);
+            $content = str_replace(["$send_wxid:", "\n", "\t"], '', $data['content']);
+            if (strpos($content, '</') !== false) {
+                $xml_params = json_decode(json_encode(simplexml_load_string($content)), true);
+            }
+            $data['msg_from'] = 2;
+        } else {
+            $send_wxid = $data['from_user'];
+            $content = $data['content'];
+            $data['msg_from'] = 1;
+        }
+        $data['send_wxid'] = $send_wxid;
+        $data['content'] = $content;
+        $data['xml_params'] = !empty($xml_params) ? $xml_params : [];
+        return $data;
     }
 }
