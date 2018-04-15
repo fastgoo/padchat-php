@@ -10,7 +10,7 @@
 
 ---
 
-:zap: **[推荐--nodejs版本](https://alibaba.github.io/ice/#/block)：** padchat团队提供的nodesdk,本项目是参照该项目开发
+:zap: **[推荐--nodejs版本](https://github.com/binsee/padchat-sdk)：** padchat团队提供的nodesdk,本项目是参照该项目开发
 
 :dart: **[Swoole](https://www.swoole.com/)：** 版本需要为1.9+，主要使用其定时器、异步websocket客户端、多进程管理等
 
@@ -25,7 +25,7 @@
 - `composer install` 安装依赖包
 - `php run.php` 开始服务
 
-## 项目说明
+## 启动说明
 在启动项目之前需要先配置配置文件，配置后才方可启动
 
 ```
@@ -50,6 +50,11 @@
 ```
 如需在生产环境运行，请关闭日志打印，以及终端输出。同时向保证进程稳定运行请使用进程守护工具守护进程，保证进程的正常运行。
 
+## 项目简介
+- 项目启动后会自动启动服务，生成二维码
+- 二维码存放在runtime/qrcode/xxx.png（根据时间生成的）
+- 可以通过配置配置请求写入日志，响应写入日志，或者直接输出在终端上
+- 里面封装了大部分时间以及数据处理，后续会做持续更新
 
 ## 简介
 - QQ：773729704 记得备注github
