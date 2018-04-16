@@ -15,6 +15,7 @@ use AsyncClient\WebSocket;
 use Padchat\Core\Logger;
 use Padchat\Core\Receive;
 use AsyncClient\SwooleProcess;
+use Padchat\Core\TaskIoc;
 
 class Bootstrap
 {
@@ -34,13 +35,14 @@ class Bootstrap
      */
     public function init()
     {
-
-        $this->callFunc = function (int $pid = 0) {
-
+        $accounts = file_get_contents(BASE_PATH . "/account.json");
+        $accounts = json_decode($accounts, true);
+        $this->callFunc = function (int $pid = 0, $index = 0) use ($accounts) {
             /** 注册配置信息 */
             PadchatDi::getDefault()->set('config', function () {
                 return json_decode(json_encode($this->config));
             });
+            TaskIoc::getDefault()->set('account', !empty($accounts[$index]) ? $accounts[$index] : []);
             /** 注册websocket服务类 */
             PadchatDi::getDefault()->set('websocket', function () {
                 $config = PadchatDi::getDefault()->get('config');
@@ -117,8 +119,8 @@ class Bootstrap
         } else {
             for ($i = 1; $i <= $this->config['process']['count']; $i++) {
                 $process = new SwooleProcess();
-                $process->init(function ($work) use ($call) {
-                    $call($work->pid);
+                $process->init(function ($work) use ($call, $i) {
+                    $call($work->pid, $i - 1);
                     //$work->exit();
                 });
                 $process->setProcessName('padchat-php-index-' . $i);

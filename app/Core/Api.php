@@ -26,7 +26,6 @@ class Api
         if ($config->debug->request) {
             PadchatDi::getDefault()->get('log')->requestDebug($ret);
         }
-
         PadchatDi::getDefault()->get('websocket')->send($ret);
     }
 
@@ -39,11 +38,18 @@ class Api
     }
 
     /**
-     * 获取登录二维码
+     * 登录（没有token信息会自动授权登录）
+     * @param array $data
      */
-    public function login()
+    public function login(array $data = [])
     {
-        $this->send('login', ['loginType' => 'qrcode']);
+        if (!$data) {
+            $this->send('login', ['loginType' => 'qrcode']);
+            return;
+        }
+        !empty($data['token']) && $data['loginType'] = 'request';
+        !empty($data['username']) && $data['loginType'] = 'user';
+        $this->send('login', $data);
     }
 
     /**

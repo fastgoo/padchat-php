@@ -74,6 +74,25 @@ class Receive
     }
 
     /**
+     * 获取登录二维码成功（事件）
+     * @return array|bool
+     */
+    public function isLoginWarning()
+    {
+        if (!$this->param) {
+            return false;
+        }
+        if ($this->getCmdIdType() == 'login' && $this->param->data->success == false) {
+            $xml = strstr($this->param->data->data->message, "http");
+            $url = strstr($xml, "]]></Url>", true);
+            if (filter_var($url, FILTER_VALIDATE_URL)) {
+                return $url;
+            }
+        }
+        return false;
+    }
+
+    /**
      * 是否等待扫码（事件）
      * @return bool
      */

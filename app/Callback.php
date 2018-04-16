@@ -88,11 +88,20 @@ class Callback
     {
         //初始化设备
         if (PadchatDi::getDefault()->get('receive')->isInit()) {
-            PadchatDi::getDefault()->get('api')->login();
+            /** @var $param token登录，需要手机点确认登录 */
+            $param = ['token' => '', 'wxData' => ''];
+            /** @var $param 账号密码登录，可能需要安全验证 */
+            $param = ['username' => '账号', 'password' => '密码'];
+            /** 开始登陆 */
+            PadchatDi::getDefault()->get('api')->login(TaskIoc::getDefault()->get('account'));
         }
         //获取登录二维码成功
         if ($ret = PadchatDi::getDefault()->get('receive')->isGetQrcodeSuccess()) {
             $this->qrcodeSuccessHandler($ret);
+        }
+        //账号密码登录验证
+        if ($url = PadchatDi::getDefault()->get('receive')->isLoginWarning()) {
+            echo "\n【微信警告】: $url";
         }
         //等待扫码
         if ($ret = PadchatDi::getDefault()->get('receive')->isWaitScan()) {
