@@ -30,19 +30,25 @@ switch ($argv[1]) {
         $data = $client->getLoginSuccessInfo();
         break;
     case 'login_wx_info':
-        $data = $client->getWxInfo("wxid_zizd4h0uzffg22");
+        $data = $client->getWxInfo("wxid_t7p01dw592qt12");
         break;
     case 'friend_list':
-        $data = $client->getFriendList("wxid_zizd4h0uzffg22", 1, 1, 15);
+        $data = $client->getFriendList("wxid_t7p01dw592qt12", 1, 1, 15);
         break;
     case 'gh_list':
-        $data = $client->getFriendList("wxid_zizd4h0uzffg22", 1, 1, 15);
+        $data = $client->getFriendList("wxid_t7p01dw592qt12", 1, 1, 15);
         break;
     case 'group_list':
-        $data = $client->getFriendList("wxid_zizd4h0uzffg22", 1, 1, 15);
+        $data = $client->getFriendList("wxid_t7p01dw592qt12", 1, 1, 15);
         break;
     case 'send_msg':
-        $data = $client->sendMsg("wxid_zizd4h0uzffg22", "wxid_k9jdv2j4n8cf12", '666');
+        $msg = [
+            'title'=>'测试标题',
+            'des'=>"测试描述",
+            'url'=>'https://www.baidu.com',
+            'thumburl'=>'http://wx.qlogo.cn/mmhead/ver_1/KI3hyxHcWsoicWUzJWUrwVZS1iczNeYNNR0EQ9Hq2KPAgHjF8JP3kicC2wPMrHP5CSNV0s9nTh2vObG49aFvdc5wozZokXC9psVibArhKobPgCU/132',
+        ];
+        $data = $client->sendMsg("wxid_t7p01dw592qt12", "wxid_k9jdv2j4n8cf12", "123");
         break;
 }
 var_dump($data);

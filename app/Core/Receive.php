@@ -125,7 +125,13 @@ class Receive
         if (!$this->param) {
             return false;
         }
-        return isset($this->param->event) && $this->param->type == 'userEvent' && $this->param->event == 'scan' && !empty($this->param->data->user_name) ? $this->param->data : false;
+        if (isset($this->param->event) && $this->param->type == 'userEvent' && $this->param->event == 'scan' && !empty($this->param->data->user_name)) {
+            return $this->param->data;
+        }
+        if ($this->getCmdIdType() == 'login' && $this->param->data->success == true) {
+            return $this->param->data->data;
+        }
+        return false;
     }
 
     /**

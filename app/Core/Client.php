@@ -146,9 +146,9 @@ class Client
         }
         $key = "padchat_wx_{$wxid}_send_msg_task";
         if ($this->redis->exists($key) && $this->redis->lLen($key)) {
-            $ret = json_decode($this->redis->lPop($key));
+            $ret = json_decode($this->redis->lPop($key), true);
             if ($ret) {
-                PadchatDi::getDefault()->get('api')->sendMsg($ret->wxid, $ret->content, $ret->at_list);
+                PadchatDi::getDefault()->get('api')->sendMsg($ret['wxid'], $ret['content'], '123');
             }
         }
     }

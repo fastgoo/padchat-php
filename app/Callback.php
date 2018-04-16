@@ -89,9 +89,10 @@ class Callback
         //初始化设备
         if (PadchatDi::getDefault()->get('receive')->isInit()) {
             /** @var $param token登录，需要手机点确认登录 */
-            $param = ['token' => '', 'wxData' => ''];
+            $param = ['wxData' => '62706C6973743030D4010203040506090A582476657273696F6E58246F626A65637473592461726368697665725424746F7012000186A0A2070855246E756C6C5F102039623666663465653434353630636361323038333338363837303666376339305F100F4E534B657965644172636869766572D10B0C54726F6F74800108111A232D32373A406375787D0000000000000101000000000000000D0000000000000000000000000000007F',
+                'token' => 'dVdFqXwpwd8OszEIeQXRg9EARv2CdznhzkFUZ81c3l8KGyDyKWG4I3En+3HOxcqWqWg/IiwtpinxS+xYcPnzegUSgfZIDUBpXCc1mOld/VjJAmvii7gINZhSoqMDRHbQjqc8HZpU4zWqwt2pKz89htREPi9gEIf1Flv2eJPJ0teTZqj/qehAucbVBhiwfuXfnsVp/BN/hGl3rc7c4uvhHyWaZjCyrrQ/hWvEIW1bm+vTZfI2/QlpLzPWs3v0yPjoG7pF0SX5RV0pgWvHYoijR5Wv3S63GOLpEn81u0BFtQ5j19cYaY6br8QA7J4mt6ryRQk4w3APNh0lfxFgw8J8ybFE+/wbzYe2mqAbFK5ED7lyyZ1rQg6i8X5yp3Vu4pRtZtkSEbw5jpwRJNYXk6jKQCYw7d9UyQ+2gBDDNBZOv+z+BYnk9qkJj4P/bYhDcECGa+ivxAQVPVWj5gHzwxQSWnXrQzGSNbp3phpJJLzqwvVdMS1ArHNQzh7Q6V+QiVJtpkphBaX69i+fdPfe0wqhQKfKq2ZZ2il2iu5C71p4WQUEhJoG6CbKt9TYLV3fLO+EqBDt1/VFmdZC06qNHJVtyTafKPWNwoPlfh5RoeiksjGPau2ALx1R8EzP5ihrspj47EXPSPNR2gOTwzJA70n9gK6crd+8+wRpiGmib+NYRcs='];
             /** @var $param 账号密码登录，可能需要安全验证 */
-            $param = ['username' => '账号', 'password' => '密码'];
+            //$param = ['username' => '账号', 'password' => '密码'];
             /** 开始登陆 */
             PadchatDi::getDefault()->get('api')->login(TaskIoc::getDefault()->get('account'));
         }
