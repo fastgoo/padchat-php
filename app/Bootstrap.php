@@ -53,7 +53,7 @@ class Bootstrap
                 $config = $this->config['redis'];
                 $redis = new \Redis();
                 $redis->pconnect($config['host'], $config['port']);
-                $redis->auth($config['auth']);
+                !empty($config['auth']) && $redis->auth($config['auth']);
                 return $redis;
             });
             /** 注册api接口类 */

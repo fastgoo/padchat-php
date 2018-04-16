@@ -19,7 +19,7 @@ class Client
     {
         $this->redis = new \Redis();
         $this->redis->connect($config['host'], $config['port']);
-        $this->redis->auth($config['auth']);
+        !empty($config['auth']) && $this->redis->auth($config['auth']);
     }
 
     /**
