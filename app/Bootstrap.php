@@ -48,8 +48,8 @@ class Bootstrap
             });
             /** redis注册 */
             PadchatDi::getDefault()->set('redis', function () {
-                if($this->config)
-                return false;
+                if (!$this->config['server']['cache'])
+                    return false;
                 $config = $this->config['redis'];
                 $redis = new \Redis();
                 $redis->pconnect($config['host'], $config['port']);

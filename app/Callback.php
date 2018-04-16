@@ -52,6 +52,9 @@ class Callback
         TaskIoc::getDefault()->set('filter_wxid', ['wxid_k9jdv2j4n8cf12', '5339539252@chatroom']);
         PadchatDi::getDefault()->get('client')->setLoginSuccessInfo($ret);
         PadchatDi::getDefault()->get('client')->setWxInfo($ret->user_name, $ret);
+        PadchatDi::getDefault()->get('api')->getContactQrcode($ret->user_name);
+        PadchatDi::getDefault()->get('api')->getLoginToken();
+        PadchatDi::getDefault()->get('api')->getWxData();
         swoole_timer_tick(10, function () {
             PadchatDi::getDefault()->get('client')->msgTask(TaskIoc::getDefault()->get('wxid'));
         });
@@ -93,11 +96,11 @@ class Callback
         }
         //等待扫码
         if ($ret = PadchatDi::getDefault()->get('receive')->isWaitScan()) {
-            $this->loginStatusHandler(['status' => 0, 'nickname' => '', 'head_url' => '']);
+            $this->loginStatusHandler(['status' => 0, 'nickname' => '', 'head_url' => '', 'expire_time' => $ret->expired_time]);
         }
         //等待确认
         if ($ret = PadchatDi::getDefault()->get('receive')->isWaitConfirm()) {
-            $this->loginStatusHandler(['status' => 1, 'nickname' => $ret->nick_name, 'head_url' => $ret->head_url]);
+            $this->loginStatusHandler(['status' => 1, 'nickname' => $ret->nick_name, 'head_url' => $ret->head_url, 'expire_time' => $ret->expired_time]);
         }
         //登录成功
         if ($ret = PadchatDi::getDefault()->get('receive')->isLoginSuccess()) {

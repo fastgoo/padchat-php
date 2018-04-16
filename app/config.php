@@ -23,7 +23,7 @@ return [
     'server' => [
         'host' => '47.98.198.224',
         'port' => 7777,
-        'cache' => false,
+        'cache' => true,
     ],
     'redis' => [
         'host' => '39.108.134.88',
