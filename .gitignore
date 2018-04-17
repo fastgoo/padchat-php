@@ -4,6 +4,8 @@
 vendor/
 runtime/log/*.log
 runtime/qrcode/*.png
+runtime/wxdata/*.log
+runtime/wxtoken/*.log
 composer.lock
 
 

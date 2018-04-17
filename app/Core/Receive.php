@@ -128,7 +128,7 @@ class Receive
         if (isset($this->param->event) && $this->param->type == 'userEvent' && $this->param->event == 'scan' && !empty($this->param->data->user_name)) {
             return $this->param->data;
         }
-        if ($this->getCmdIdType() == 'login' && $this->param->data->success == true) {
+        if ($this->getCmdIdType() == 'login' && $this->param->data->success == true && !empty($this->param->data->data->user_name)) {
             return $this->param->data->data;
         }
         return false;
@@ -171,6 +171,24 @@ class Receive
             }
         }
         return false;
+    }
+
+    /**
+     * 是否是获取wxdata消息回调
+     * @return bool
+     */
+    public function isGetWxData()
+    {
+        return $this->getCmdIdType() == 'getWxData' && isset($this->param->data->success) && $this->param->data->success == true ? $this->param->data->data->wx_data : false;
+    }
+
+    /**
+     * 是否是获取登录token消息回调
+     * @return bool
+     */
+    public function isGetLoginToken()
+    {
+        return $this->getCmdIdType() == 'getLoginToken' && isset($this->param->data->success) && $this->param->data->success == true ? $this->param->data->data->token : false;
     }
 
     public function getMsgType()

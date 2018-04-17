@@ -16,6 +16,7 @@ use Padchat\Core\Logger;
 use Padchat\Core\Receive;
 use AsyncClient\SwooleProcess;
 use Padchat\Core\TaskIoc;
+use League\CLImate\CLImate as Cli;
 
 class Bootstrap
 {
@@ -41,6 +42,10 @@ class Bootstrap
             /** 注册配置信息 */
             PadchatDi::getDefault()->set('config', function () {
                 return json_decode(json_encode($this->config));
+            });
+            /** 注册多彩打印 */
+            PadchatDi::getDefault()->set('cli', function () {
+                return new Cli;
             });
             TaskIoc::getDefault()->set('account', !empty($accounts[$index]) ? $accounts[$index] : []);
             /** 注册websocket服务类 */
@@ -84,7 +89,8 @@ class Bootstrap
             PadchatDi::getDefault()->get('websocket')->onMessage(function ($server, $frame) {
                 $config = PadchatDi::getDefault()->get('config');
                 if ($config->debug->cmd) {
-                    echo "响应：$frame->data";
+                    PadchatDi::getDefault()->get('cli')->green("\n【响应数据】");
+                    echo $frame->data."\n";
                 }
                 if ($config->debug->response) {
                     PadchatDi::getDefault()->get('log')->responseDebug($frame->data);
@@ -96,7 +102,7 @@ class Bootstrap
             PadchatDi::getDefault()->get('websocket')->onConnect(function () use ($pid) {
                 PadchatDi::getDefault()->get('api')->send('init');
                 if ($pid) {
-                    echo "\n启动padchat-php服务成功，pid: $pid";
+                    PadchatDi::getDefault()->get('cli')->green("\n启动padchat-php服务成功，pid: $pid");
                 }
             });
             /** 连接服务 */

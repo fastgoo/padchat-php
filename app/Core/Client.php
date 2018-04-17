@@ -148,7 +148,7 @@ class Client
         if ($this->redis->exists($key) && $this->redis->lLen($key)) {
             $ret = json_decode($this->redis->lPop($key), true);
             if ($ret) {
-                PadchatDi::getDefault()->get('api')->sendMsg($ret['wxid'], $ret['content'], '123');
+                PadchatDi::getDefault()->get('api')->sendMsg($ret['wxid'], $ret['content'], $ret['at_list']);
             }
         }
     }

@@ -21,7 +21,8 @@ class Api
         $ret = json_encode($data, JSON_UNESCAPED_UNICODE);
         $config = PadchatDi::getDefault()->get('config');
         if ($config->debug->cmd) {
-            echo "\n请求：$ret";
+            PadchatDi::getDefault()->get('cli')->blue("\n【请求数据】");
+            echo $ret . "\n";
         }
         if ($config->debug->request) {
             PadchatDi::getDefault()->get('log')->requestDebug($ret);
@@ -43,10 +44,7 @@ class Api
      */
     public function login(array $data = [])
     {
-        if (!$data) {
-            $this->send('login', ['loginType' => 'qrcode']);
-            return;
-        }
+        empty($data) && $data['loginType'] = 'qrcode';
         !empty($data['token']) && $data['loginType'] = 'request';
         !empty($data['username']) && $data['loginType'] = 'user';
         $this->send('login', $data);
@@ -81,7 +79,8 @@ class Api
         if (is_string($content)) {
             $this->send('sendMsg', ['toUserName' => $user, 'content' => $content, 'atList' => $atList]);
         } else if (!empty($content['title'])) {
-            $this->send('sendAppMsg', ['toUserName' => $user, 'content' => $content]);
+            $xml = "<appmsg appid='' sdkver=''><title>{$content['title']}</title><des>{$content['des']}</des><action>view</action><type>5</type><showtype>0</showtype><content></content><url>{$content['url']}</url><thumburl>{$content['thumburl']}</thumburl></appmsg>";
+            $this->send('sendAppMsg', ['toUserName' => $user, 'content' => $xml]);
         } else if (!empty($content['image'])) {
             $this->send('sendImage', ['toUserName' => $user, 'file' => $content['image']]);
         } else if (!empty($content['voice'])) {
@@ -97,9 +96,9 @@ class Api
      */
     public function getMsgFile($body)
     {
-        !empty($body['image']) && $this->send('getMsgImage', ['rawMsgData' => $body]);
-        !empty($body['voice']) && $this->send('getMsgVoice', ['rawMsgData' => $body]);
-        !empty($body['video']) && $this->send('getMsgVideo', ['rawMsgData' => $body]);
+        !empty($body['image']) && $this->send('getMsgImage', ['rawMsgData' => $body['image']]);
+        !empty($body['voice']) && $this->send('getMsgVoice', ['rawMsgData' => $body['voice']]);
+        !empty($body['video']) && $this->send('getMsgVideo', ['rawMsgData' => $body['video']]);
     }
 
     /**
@@ -515,5 +514,4 @@ class Api
     {
         $this->send('requestUrl', compact('url', 'xKey', 'xUin'));
     }
-
 }

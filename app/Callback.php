@@ -10,7 +10,6 @@ namespace Padchat;
 
 use Padchat\Core\Ioc as PadchatDi;
 use Padchat\Core\TaskIoc;
-use Padchat\Core\Receive;
 
 class Callback
 {
@@ -49,15 +48,34 @@ class Callback
     private function loginSuccessHandler($ret)
     {
         TaskIoc::getDefault()->set('wxid', $ret->user_name);
-        TaskIoc::getDefault()->set('filter_wxid', ['wxid_k9jdv2j4n8cf12', '5339539252@chatroom']);
+        TaskIoc::getDefault()->set('start_time', time());
+        TaskIoc::getDefault()->set('filter_wxid', []);
         PadchatDi::getDefault()->get('client')->setLoginSuccessInfo($ret);
         PadchatDi::getDefault()->get('client')->setWxInfo($ret->user_name, $ret);
-        PadchatDi::getDefault()->get('api')->getContactQrcode($ret->user_name);
+        //PadchatDi::getDefault()->get('api')->getContactQrcode($ret->user_name);
         PadchatDi::getDefault()->get('api')->getLoginToken();
         PadchatDi::getDefault()->get('api')->getWxData();
         swoole_timer_tick(10, function () {
             PadchatDi::getDefault()->get('client')->msgTask(TaskIoc::getDefault()->get('wxid'));
         });
+    }
+
+    /**
+     * 获取wxdata处理器
+     * @param $ret
+     */
+    private function getWxDataHandler($ret)
+    {
+        file_put_contents(BASE_PATH . '/runtime/wxdata/' . TaskIoc::getDefault()->get('wxid') . '.log', $ret);
+    }
+
+    /**
+     * 获取登录token处理器
+     * @param $ret
+     */
+    private function getLoginTokenHandler($ret)
+    {
+        file_put_contents(BASE_PATH . '/runtime/wxtoken/' . TaskIoc::getDefault()->get('wxid') . '.log', $ret);
     }
 
     /**
@@ -88,12 +106,7 @@ class Callback
     {
         //初始化设备
         if (PadchatDi::getDefault()->get('receive')->isInit()) {
-            /** @var $param token登录，需要手机点确认登录 */
-            $param = ['wxData' => '62706C6973743030D4010203040506090A582476657273696F6E58246F626A65637473592461726368697665725424746F7012000186A0A2070855246E756C6C5F102039623666663465653434353630636361323038333338363837303666376339305F100F4E534B657965644172636869766572D10B0C54726F6F74800108111A232D32373A406375787D0000000000000101000000000000000D0000000000000000000000000000007F',
-                'token' => 'dVdFqXwpwd8OszEIeQXRg9EARv2CdznhzkFUZ81c3l8KGyDyKWG4I3En+3HOxcqWqWg/IiwtpinxS+xYcPnzegUSgfZIDUBpXCc1mOld/VjJAmvii7gINZhSoqMDRHbQjqc8HZpU4zWqwt2pKz89htREPi9gEIf1Flv2eJPJ0teTZqj/qehAucbVBhiwfuXfnsVp/BN/hGl3rc7c4uvhHyWaZjCyrrQ/hWvEIW1bm+vTZfI2/QlpLzPWs3v0yPjoG7pF0SX5RV0pgWvHYoijR5Wv3S63GOLpEn81u0BFtQ5j19cYaY6br8QA7J4mt6ryRQk4w3APNh0lfxFgw8J8ybFE+/wbzYe2mqAbFK5ED7lyyZ1rQg6i8X5yp3Vu4pRtZtkSEbw5jpwRJNYXk6jKQCYw7d9UyQ+2gBDDNBZOv+z+BYnk9qkJj4P/bYhDcECGa+ivxAQVPVWj5gHzwxQSWnXrQzGSNbp3phpJJLzqwvVdMS1ArHNQzh7Q6V+QiVJtpkphBaX69i+fdPfe0wqhQKfKq2ZZ2il2iu5C71p4WQUEhJoG6CbKt9TYLV3fLO+EqBDt1/VFmdZC06qNHJVtyTafKPWNwoPlfh5RoeiksjGPau2ALx1R8EzP5ihrspj47EXPSPNR2gOTwzJA70n9gK6crd+8+wRpiGmib+NYRcs='];
-            /** @var $param 账号密码登录，可能需要安全验证 */
-            //$param = ['username' => '账号', 'password' => '密码'];
-            /** 开始登陆 */
+            /** 开始登陆（默认账号密码登录，为设置的情况下就是扫码登录） */
             PadchatDi::getDefault()->get('api')->login(TaskIoc::getDefault()->get('account'));
         }
         //获取登录二维码成功
@@ -102,7 +115,8 @@ class Callback
         }
         //账号密码登录验证
         if ($url = PadchatDi::getDefault()->get('receive')->isLoginWarning()) {
-            echo "\n【微信警告】: $url";
+            PadchatDi::getDefault()->get('cli')->red("\n【微信URL警告】");
+            echo $url;
         }
         //等待扫码
         if ($ret = PadchatDi::getDefault()->get('receive')->isWaitScan()) {
@@ -115,6 +129,14 @@ class Callback
         //登录成功
         if ($ret = PadchatDi::getDefault()->get('receive')->isLoginSuccess()) {
             $this->loginSuccessHandler($ret);
+        }
+        //是否是获取wxdata回调消息
+        if ($ret = PadchatDi::getDefault()->get('receive')->isGetWxData()) {
+            $this->getWxDataHandler($ret);
+        }
+        //是否是获取token回调消息
+        if ($ret = PadchatDi::getDefault()->get('receive')->isGetLoginToken()) {
+            $this->getLoginTokenHandler($ret);
         }
         //获取好友列表回调
         if ($ret = PadchatDi::getDefault()->get('receive')->isGetFriendsList()) {
@@ -154,26 +176,41 @@ class Callback
      */
     private function message($data)
     {
+        $params = PadchatDi::getDefault()->get('receive')->getMessageParams($data);
+        $filter_wxid = TaskIoc::getDefault()->get('filter_wxid');
+        if (!$params) {
+            return;
+        }
+        /** 如果是初始化，就会添加白名单 */
+        if (!in_array($data->from_user, $filter_wxid) && $params['content'] == '#init') {
+            $filter_wxid[] = $data->from_user;
+            PadchatDi::getDefault()->get('api')->sendMsg($data->from_user, "初始化成功,加入白名单成功");
+            TaskIoc::getDefault()->set('filter_wxid', $filter_wxid);
+        }
         /** wxid白名单过滤 */
-        if (TaskIoc::getDefault()->get('filter_wxid') && !in_array($data->from_user, TaskIoc::getDefault()->get('filter_wxid'))) {
+        if (!in_array($data->from_user, $filter_wxid)) {
             return;
         }
         /** 群消息如果是非@消息直接绕过 */
-        if ($params = PadchatDi::getDefault()->get('receive')->getMessageParams($data)) {
-            if ($params['msg_from'] == 2 && !PadchatDi::getDefault()->get('receive')->isAtMe()) {
-                return;
-            }
+        if ($params['msg_from'] == 2 && !PadchatDi::getDefault()->get('receive')->isAtMe()) {
+            return;
         }
-
         switch ($data->sub_type) {
             case 1:
-                PadchatDi::getDefault()->get('api')->sendMsg($data->from_user, "收到文字消息");
+                if ($params['content'] == '#runtime') {
+                    PadchatDi::getDefault()->get('api')->sendMsg($data->from_user, "开始运行时间：" .
+                        date("Y-m-d H:i:s", TaskIoc::getDefault()->get('start_time')) . "\n已运行：" . (time() - TaskIoc::getDefault()->get('start_time')));
+                } else {
+                    PadchatDi::getDefault()->get('api')->sendMsg($data->from_user, $params['content']);
+                }
                 break;
             case 3:
-                //PadchatDi::getDefault()->get('api')->sendMsg($data->from_user, "收到图片消息");
+                PadchatDi::getDefault()->get('api')->getMsgFile(['image' => $params['content']]);
+                PadchatDi::getDefault()->get('api')->sendMsg($data->from_user, ["image" => $params['data']]);
                 break;
             case 34:
-                //PadchatDi::getDefault()->get('api')->sendMsg($data->from_user, "收语音消息");
+                PadchatDi::getDefault()->get('api')->getMsgFile(['voice' => $params['content']]);
+                PadchatDi::getDefault()->get('api')->sendMsg($data->from_user, ["voice" => $params['data']]);
                 break;
             case 35:
                 //PadchatDi::getDefault()->get('api')->sendMsg($data->from_user, "收到头像BUFF消息");
@@ -182,52 +219,59 @@ class Callback
                 $this->friendRequestHandler($data, PadchatDi::getDefault()->get('receive')->getFriendRequestParams($data));
                 break;
             case 42:
-                //PadchatDi::getDefault()->get('api')->sendMsg($data->from_user, "收到名片消息");
+                PadchatDi::getDefault()->get('api')->sendMsg($data->from_user, ['userId' => 'wxid_t7p01dw592qt12', 'content' => '这个大牛很屌',]);
                 break;
             case 43:
-                //PadchatDi::getDefault()->get('api')->sendMsg($data->from_user, "收到视频消息");
+                //PadchatDi::getDefault()->get('api')->getMsgFile($params['content']);
+                PadchatDi::getDefault()->get('api')->sendMsg($data->from_user, "收到视频消息");
                 break;
             case 47:
-                //PadchatDi::getDefault()->get('api')->sendMsg($data->from_user, "收到表情消息");
+                PadchatDi::getDefault()->get('api')->sendMsg($data->from_user, "收到表情消息");
                 break;
             case 48:
-                //PadchatDi::getDefault()->get('api')->sendMsg($data->from_user, "收到定位消息");
+                PadchatDi::getDefault()->get('api')->sendMsg($data->from_user, "收到定位消息");
                 break;
             case 49:
-                //PadchatDi::getDefault()->get('api')->sendMsg($data->from_user, "收到APP消息");
+                $msg = [
+                    'title' => '测试标题',
+                    'des' => "测试描述",
+                    'url' => 'https://www.baidu.com',
+                    'thumburl' => 'http://wx.qlogo.cn/mmhead/ver_1/KI3hyxHcWsoicWUzJWUrwVZS1iczNeYNNR0EQ9Hq2KPAgHjF8JP3kicC2wPMrHP5CSNV0s9nTh2vObG49aFvdc5wozZokXC9psVibArhKobPgCU/132',
+                ];
+                PadchatDi::getDefault()->get('api')->sendMsg($data->from_user, $msg);
                 break;
             case 50:
-                //PadchatDi::getDefault()->get('api')->sendMsg($data->from_user, "收到语音通话消息");
+                PadchatDi::getDefault()->get('api')->sendMsg($data->from_user, "收到语音通话消息");
                 break;
             case 51:
-                //PadchatDi::getDefault()->get('api')->sendMsg($data->from_user, "收到状态通知消息");
+                PadchatDi::getDefault()->get('api')->sendMsg($data->from_user, "收到状态通知消息");
                 break;
             case 52:
-                //PadchatDi::getDefault()->get('api')->sendMsg($data->from_user, "收到通话通知消息");
+                PadchatDi::getDefault()->get('api')->sendMsg($data->from_user, "收到通话通知消息");
                 break;
             case 53:
-                //PadchatDi::getDefault()->get('api')->sendMsg($data->from_user, "收到通话邀请消息");
+                PadchatDi::getDefault()->get('api')->sendMsg($data->from_user, "收到通话邀请消息");
                 break;
             case 62:
-                //PadchatDi::getDefault()->get('api')->sendMsg($data->from_user, "收到小视频消息");
+                PadchatDi::getDefault()->get('api')->sendMsg($data->from_user, "收到小视频消息");
                 break;
             case 2000:
-                //PadchatDi::getDefault()->get('api')->sendMsg($data->from_user, "收到转账消息");
+                PadchatDi::getDefault()->get('api')->sendMsg($data->from_user, "收到转账消息");
                 break;
             case 2001:
-                //PadchatDi::getDefault()->get('api')->sendMsg($data->from_user, "收到红包消息");
+                PadchatDi::getDefault()->get('api')->sendMsg($data->from_user, "收到红包消息");
                 break;
             case 3000:
-                //PadchatDi::getDefault()->get('api')->sendMsg($data->from_user, "收到群邀请消息");
+                PadchatDi::getDefault()->get('api')->sendMsg($data->from_user, "收到群邀请消息");
                 break;
             case 9999:
-                //PadchatDi::getDefault()->get('api')->sendMsg($data->from_user, "收到系统通知消息");
+                PadchatDi::getDefault()->get('api')->sendMsg($data->from_user, "收到系统通知消息");
                 break;
             case 10000:
-                //PadchatDi::getDefault()->get('api')->sendMsg($data->from_user, "收到微信通知信息消息");
+                PadchatDi::getDefault()->get('api')->sendMsg($data->from_user, "收到微信通知信息消息");
                 break;
             case 10002:
-                //PadchatDi::getDefault()->get('api')->sendMsg($data->from_user, "收到撤回消息");
+                PadchatDi::getDefault()->get('api')->sendMsg($data->from_user, "收到撤回消息");
                 break;
         }
     }

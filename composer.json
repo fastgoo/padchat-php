@@ -2,7 +2,8 @@
     "require": {
         "php": ">=7.0",
         "fastgoo/async-http-client": "^1.2",
-        "monolog/monolog": "^1.23"
+        "monolog/monolog": "^1.23",
+        "league/climate": "^3.2"
     },
     "require-dev": {
         "eaglewu/swoole-ide-helper": "dev-master"
