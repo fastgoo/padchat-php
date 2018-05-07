@@ -9,7 +9,7 @@
 namespace Padchat;
 
 use Padchat\Core\Ioc as PadchatDi;
-use Padchat\Core\QrCode;
+use Padchat\Core\Qrcode;
 use Padchat\Core\TaskIoc;
 
 class Callback
@@ -30,7 +30,7 @@ class Callback
         // 老版本使用的base64的处理机制
         //PadchatDi::getDefault()->get('client')->setLoginQrcode($ret->qr_code);
         //file_put_contents(BASE_PATH . '/runtime/qrcode/login-' . date('His') . '.png', base64_decode($ret->qr_code));
-        (new QrCode)->show($ret->url);
+        (new Qrcode)->show($ret->url);
     }
 
     /**
