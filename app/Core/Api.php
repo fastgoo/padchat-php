@@ -135,7 +135,7 @@ class Api
      */
     public function getContactQrcode(string $userId, int $style = 1)
     {
-        $this->send('getContactQrcode', compact('userId', 'style'));
+        $this->send('getUserQrcode', compact('userId', 'style'));
     }
 
     /**

@@ -21,9 +21,10 @@ return [
         'count' => 1
     ],
     'server' => [
-        'host' => '47.98.198.224',
+        'host' => '52.80.188.251',
         'port' => 7777,
         'cache' => true,
+        'is_account' => true,
     ],
     'redis' => [
         'host' => '127.0.0.1',

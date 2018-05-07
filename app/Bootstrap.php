@@ -47,7 +47,8 @@ class Bootstrap
             PadchatDi::getDefault()->set('cli', function () {
                 return new Cli;
             });
-            TaskIoc::getDefault()->set('account', !empty($accounts[$index]) ? $accounts[$index] : []);
+            /** 账号密码登录 */
+            TaskIoc::getDefault()->set('account', $this->config['server']['is_account'] && !empty($accounts[$index]) ? $accounts[$index] : []);
             /** 注册websocket服务类 */
             PadchatDi::getDefault()->set('websocket', function () {
                 $config = PadchatDi::getDefault()->get('config');
@@ -90,7 +91,7 @@ class Bootstrap
                 $config = PadchatDi::getDefault()->get('config');
                 if ($config->debug->cmd) {
                     PadchatDi::getDefault()->get('cli')->green("\n【响应数据】");
-                    echo $frame->data."\n";
+                    echo $frame->data . "\n";
                 }
                 if ($config->debug->response) {
                     PadchatDi::getDefault()->get('log')->responseDebug($frame->data);
