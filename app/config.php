@@ -10,18 +10,25 @@ return [
         /** 请求记录debug */
         'request' => false,
         /** 响应数据记录debug */
-        'response' => true,
+        'response' => false,
         /** 在命令终端输出debug */
         'cmd' => true,
     ],
     'process' => [
         /** 启用多进程开启多个服务 */
-        'status' => true,
+        'status' => false,
         /** 最多同时启动的服务数量 */
-        'count' => 2
+        'count' => 1
     ],
     'server' => [
-        'host' => '118.89.159.190',
+        'host' => '52.80.188.251',
         'port' => 7777,
+        'cache' => false,
+        'is_account' => true,
+    ],
+    'redis' => [
+        'host' => '127.0.0.1',
+        'port' => 6379,
+        'auth' => '',
     ],
 ];

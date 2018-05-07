@@ -50,7 +50,7 @@ class TaskIoc
     public function get(string $name)
     {
         if (!isset(self::$_instance->taskArr[$name])) {
-            return [];
+            return false;
         }
         return self::$_instance->taskArr[$name];
     }
