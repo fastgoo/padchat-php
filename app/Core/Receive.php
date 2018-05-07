@@ -70,7 +70,7 @@ class Receive
         if (!$this->param) {
             return false;
         }
-        return isset($this->param->event) && $this->param->event == 'qrcode' && !empty($this->param->data->qr_code) ? $this->param->data : false;
+        return isset($this->param->event) && $this->param->event == 'qrcode' && !empty($this->param->data->url) ? $this->param->data : false;
     }
 
     /**

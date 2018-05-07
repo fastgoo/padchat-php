@@ -24,7 +24,7 @@ return [
         'host' => '52.80.188.251',
         'port' => 7777,
         'cache' => false,
-        'is_account' => true,
+        'is_account' => false,
     ],
     'redis' => [
         'host' => '127.0.0.1',
