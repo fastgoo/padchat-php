@@ -84,7 +84,7 @@ class Api
         } else if (!empty($content['image'])) {
             $this->send('sendImage', ['toUserName' => $user, 'file' => $content['image']]);
         } else if (!empty($content['voice'])) {
-            $this->send('sendVoice', ['toUserName' => $user, 'file' => $content['voice']]);
+            $this->send('sendVoice', ['toUserName' => $user, 'file' => $content['voice'], 'time' => !empty($content['time']) ? $content['time'] : 1]);
         } else if (!empty($content['userId']) && isset($content['content'])) {
             $this->send('shareCard', ['toUserName' => $user, 'content' => $content['content'], 'userId' => $content['userId']]);
         }
