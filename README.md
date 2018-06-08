@@ -19,7 +19,10 @@
 :wine_glass: **[Redis](https://redis.io/)：** 依赖redis扩展，二维码、状态、微信信息、好友列表等存储。如果不需要可以修改配置cache为false就可以了
 
 ## 更新日志
-- 2018-06-08 新增syncContact接口触发同步通讯录，新增getMyInfo接口获取当前连接的用户信息wxid、uin，新增syncMsg接口手动同步微信消息
+#### 2018-06-08 
+- 新增syncContact接口触发同步通讯录
+- 新增getMyInfo接口获取当前连接的用户信息wxid、uin
+- 新增syncMsg接口手动同步微信消息
 
 ## 已实现功能
 - 账号密码登录（多账号一键登录）
@@ -54,11 +57,11 @@
 在启动项目之前需要先配置配置文件，配置后才方可启动
 
 ```
-'debug' => [
+    'debug' => [
         /** 请求记录debug */
         'request' => false,
         /** 响应数据记录debug */
-        'response' => true,
+        'response' => false,
         /** 在命令终端输出debug */
         'cmd' => true,
     ],
@@ -66,11 +69,18 @@
         /** 启用多进程开启多个服务 */
         'status' => false,
         /** 最多同时启动的服务数量 */
-        'count' => 2
+        'count' => 1
     ],
     'server' => [
-        'host' => '127.0.0.1',//server.exe所在的ip
-        'port' => 7777, //端口
+        'host' => '远程服务器ip,默认',
+        'port' => 7777,
+        'cache' => false,//是否开启缓存，redis缓存
+        'is_account' => false,//是否通过账号配置登录
+    ],
+    'redis' => [
+        'host' => '127.0.0.1',
+        'port' => 6379,
+        'auth' => '',
     ],
 ```
 如需在生产环境运行，请关闭日志打印，以及终端输出。同时向保证进程稳定运行请使用进程守护工具守护进程，保证进程的正常运行。
