@@ -111,6 +111,33 @@ class Api
     }
 
     /**
+     * 获取当前微信的基础信息
+     * wxid和uin
+     */
+    public function getMyInfo()
+    {
+        $this->send('getMyInfo');
+    }
+
+    /**
+     * 同步微信消息
+     * 手动同步
+     */
+    public function syncMsg()
+    {
+        $this->send('syncMsg');
+    }
+
+    /**
+     * 同步通讯录
+     * 手动同步通讯录
+     */
+    public function syncContact()
+    {
+        $this->send('syncContact');
+    }
+
+    /**
      * 搜索联系人(可查看非好友)
      * @param string $userId
      */
@@ -514,4 +541,5 @@ class Api
     {
         $this->send('requestUrl', compact('url', 'xKey', 'xUin'));
     }
+
 }

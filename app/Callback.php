@@ -56,8 +56,13 @@ class Callback
         PadchatDi::getDefault()->get('client')->setLoginSuccessInfo($ret);
         PadchatDi::getDefault()->get('client')->setWxInfo($ret->user_name, $ret);
         //PadchatDi::getDefault()->get('api')->getContactQrcode($ret->user_name);
+        /** 获取 登录token */
         PadchatDi::getDefault()->get('api')->getLoginToken();
+        /** 获取 登录wxdata(62数据) */
         PadchatDi::getDefault()->get('api')->getWxData();
+        /** 手动同步通讯录请求 */
+        PadchatDi::getDefault()->get('api')->syncContact();
+        /** 开启定时器，监听消息队列，触发主动发送消息 */
         swoole_timer_tick(10, function () {
             PadchatDi::getDefault()->get('client')->msgTask(TaskIoc::getDefault()->get('wxid'));
         });
