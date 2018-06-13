@@ -19,6 +19,8 @@
 :wine_glass: **[Redis](https://redis.io/)：** 依赖redis扩展，二维码、状态、微信信息、好友列表等存储。如果不需要可以修改配置cache为false就可以了
 
 ## 更新日志
+#### 2018-06-13
+- 响应服务端心跳
 #### 2018-06-08 
 - 新增syncContact接口触发同步通讯录
 - 新增getMyInfo接口获取当前连接的用户信息wxid、uin
