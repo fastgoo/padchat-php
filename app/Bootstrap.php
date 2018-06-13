@@ -88,6 +88,11 @@ class Bootstrap
             PadchatDi::getDefault()->get('websocket')->setSendDataJsonEncode(false);
             /** 设置消息回调 */
             PadchatDi::getDefault()->get('websocket')->onMessage(function ($server, $frame) {
+                /** 响应心跳 */
+                if($frame->opcode === 9){
+                    $server->push('',10);
+                }
+
                 $config = PadchatDi::getDefault()->get('config');
                 if ($config->debug->cmd) {
                     PadchatDi::getDefault()->get('cli')->green("\n【响应数据】");
