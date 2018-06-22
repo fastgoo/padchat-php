@@ -9,6 +9,7 @@
 </p>
 
 ---
+:heartpulse: **[安利一个新的ipadchat项目](https://github.com/fastgoo/ipadchat-api)：** 该项目是基于HTTP通讯协议开发，安装难度低，下载demo就可运行。
 
 :zap: **[推荐--nodejs版本](https://github.com/binsee/padchat-sdk)：** padchat团队提供的nodesdk,本项目是参照该项目开发
 
