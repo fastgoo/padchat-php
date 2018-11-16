@@ -99,5 +99,8 @@
 - 服务支持：周先生 微信号 huoniaojugege
 - 协议支持：大牙 QQ 51166611
 
+## 加入微星开发者社区QQ群
+<img src="https://resource.fastgoo.net/201811161421163380.pic.jpg" width="240" height="300" alt="图片描述文字"/>
+
 
 
